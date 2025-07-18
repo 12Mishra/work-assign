@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/config/prisma";
 import bcrypt from "bcrypt";
+import { User } from "next-auth";
 
 export const { signIn, signOut, auth, handlers } = NextAuth({
   providers: [
@@ -10,7 +11,7 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
         email: { label: "Username" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials): Promise<User | null> {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password are required");
         }
@@ -35,15 +36,14 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
             throw new Error("Incorrect password ");
           }
 
-          return {
-            id: user.id,
-            email: user.email,
-          };
+          return { id: user.id, email: user.email };
         } catch (error) {
           if (error instanceof Error) {
             throw new Error("Internal Server Error ");
           }
         }
+
+        return null;
       },
     }),
   ],
