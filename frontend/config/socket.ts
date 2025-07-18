@@ -1,6 +1,8 @@
-// utils/socket.ts
 import { io } from "socket.io-client";
 
-const socket = io(`${process.env.NEXT_BACKEND_URL}`); // your backend port
+const socket = io(`${process.env.NEXT_PUBLIC_BACKEND_URL}`, {
+  withCredentials: true,
+  transports: ["websocket"],
+}); 
 
 export default socket;
